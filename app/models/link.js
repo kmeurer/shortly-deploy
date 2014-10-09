@@ -12,12 +12,14 @@ var urlSchema = mongoose.Schema({
 
 
 
+
 // convert to .pre form
 
 var Link = mongoose.model('Link', urlSchema);
 
-Link.pre('save', function(model, attrs, options){
+Link.pre('save', function(next){
     var shasum = crypto.createHash('sha1');
-    shasum.update(model.get('url'));
-    model.set('code', shasum.digest('hex').slice(0, 5));
+    shasum.update(url);
+    this.code = shasum.digest('hex').slice(0, 5);
+    next();
 });
