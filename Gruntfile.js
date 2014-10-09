@@ -113,27 +113,30 @@ module.exports = function(grunt) {
   ////////////////////////////////////////////////////
 
   grunt.registerTask('test', [
+    'jshint',
     'mochaTest'
   ]);
 
   grunt.registerTask('build', [
-    'jshint',
     'concat',
     'uglify',
-    'cssmin',
-    'mochaTest'
+    'cssmin'
   ]);
 
   grunt.registerTask('upload', function(n) {
     if(grunt.option('prod')) {
-      // add your production server task here
+
+      console.log('in prod');
+
+      grunt.task.run([ 'build', 'shell:prodServer' ]);
     } else {
+      console.log('in dev');
       grunt.task.run([ 'server-dev' ]);
     }
   });
 
   grunt.registerTask('deploy', [
-    grunt.task.run([ 'build' ]),
-    'shell:prodServer'
+    'test',
+    'upload'
   ]);
 };
