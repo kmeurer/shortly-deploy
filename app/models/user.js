@@ -8,18 +8,19 @@ var userSchema = mongoose.Schema({
 
 var User = mongoose.model('User', userSchema);
 
+User.prototype.comparePassword = function(attemptedPassword, callback) {
+    bcrypt.compare(attemptedPassword, this.password, function(err, isMatch) {
+      console.log("THIS IS THE PASSWORD", this.password);
+      if(err){return callback(err);}
+      callback(isMatch);
+    });
+};
 
-linkSchema.pre('save', function(next){
+userSchema.pre('save', function(next){
   bcrypt.hash(this.password, null, null, function(err, hash) {
     this.password = hash;
     next();
   });
 });
 
-User.prototype.comparePassword = function(attemptedPassword, callback) {
-    bcrypt.compare(attemptedPassword, this.password, function(err, isMatch) {
-      if(err){return callback(err);}
-      callback(isMatch);
-    });
-};
-
+module.exports = User;

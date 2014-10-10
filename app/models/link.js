@@ -1,7 +1,7 @@
 var crypto = require('crypto');
 var mongoose = require('mongoose');
 
-var urlSchema = mongoose.Schema({
+var linkSchema = mongoose.Schema({
   url: String,
   base_url: String,
   code: String,
@@ -10,16 +10,13 @@ var urlSchema = mongoose.Schema({
   timestamp: { type: Date, default: Date.now }
 });
 
+var Link = mongoose.model('Link', linkSchema);
 
-
-
-// convert to .pre form
-
-var Link = mongoose.model('Link', urlSchema);
-
-Link.pre('save', function(next){
+linkSchema.pre('save', function(next){
     var shasum = crypto.createHash('sha1');
-    shasum.update(url);
+    shasum.update(this.url);
     this.code = shasum.digest('hex').slice(0, 5);
     next();
 });
+
+module.exports = Link;
